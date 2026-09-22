@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MBKM Game Center</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    min-height:100vh;
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+        radial-gradient(circle at 20% 20%,rgba(34,197,94,.18),transparent 30%),
+        radial-gradient(circle at 80% 80%,rgba(59,130,246,.18),transparent 30%),
+        linear-gradient(135deg,#04120b,#071b13,#061525);
+    color:white;
+    overflow-x:hidden;
+}
+
+/* PARTICLE */
+
+.particle{
+    position:fixed;
+    width:3px;
+    height:3px;
+    background:#f5c542;
+    border-radius:50%;
+    opacity:.5;
+    animation:float 8s infinite linear;
+}
+
+@keyframes float{
+    from{
+        transform:translateY(100vh);
+    }
+    to{
+        transform:translateY(-10vh);
+    }
+}
+
+/* HEADER */
+
+.header{
+    text-align:center;
+    padding:55px 20px 25px;
+}
+
+.logo{
+    font-size:58px;
+    margin-bottom:12px;
+    animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+    50%{transform:scale(1.08)}
+}
+
+.header h1{
+    font-size:32px;
+    background:linear-gradient(90deg,#f5c542,#72e39a,#60a5fa);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+.header p{
+    color:#9ca3af;
+    margin-top:10px;
+}
+
+/* GAME GRID */
+
+.container{
+    width:min(1000px,92%);
+    margin:auto;
+    padding:20px 0 60px;
+}
+
+.game-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+}
+
+.game-card{
+    position:relative;
+    padding:25px;
+    min-height:190px;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:25px;
+    background:rgba(255,255,255,.055);
+    backdrop-filter:blur(18px);
+    overflow:hidden;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.game-card::before{
+    content:"";
+    position:absolute;
+    width:120px;
+    height:120px;
+    background:#f5c542;
+    filter:blur(70px);
+    opacity:.15;
+    right:-40px;
+    top:-40px;
+}
+
+.game-card:hover{
+    transform:translateY(-7px);
+    border-color:rgba(245,197,66,.5);
+    box-shadow:0 20px 50px rgba(0,0,0,.3);
+}
+
+.game-icon{
+    font-size:50px;
+    margin-bottom:15px;
+}
+
+.game-card h2{
+    font-size:21px;
+    margin-bottom:8px;
+}
+
+.game-card p{
+    color:#9ca3af;
+    font-size:14px;
+    line-height:1.5;
+}
+
+.play{
+    display:inline-block;
+    margin-top:15px;
+    padding:9px 15px;
+    border-radius:12px;
+    background:#f5c542;
+    color:#07130d;
+    font-weight:bold;
+}
+
+/* GAME SCREEN */
+
+.game-screen{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:100;
+    background:rgba(2,8,5,.94);
+    backdrop-filter:blur(15px);
+    padding:20px;
+}
+
+.game-screen.active{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.game-box{
+    width:min(650px,100%);
+    max-height:92vh;
+    overflow:auto;
+    padding:25px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:28px;
+    background:linear-gradient(145deg,#0b2116,#071521);
+    box-shadow:0 30px 100px rgba(0,0,0,.6);
+}
+
+.game-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.close{
+    border:0;
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    background:rgba(255,255,255,.08);
+    color:white;
+    font-size:20px;
+    cursor:pointer;
+}
+
+.score{
+    color:#f5c542;
+    font-weight:bold;
+}
+
+/* BUTTON */
+
+.btn{
+    border:0;
+    border-radius:14px;
+    padding:13px 20px;
+    background:linear-gradient(135deg,#f5c542,#eab308);
+    color:#07130d;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.btn:active{
+    transform:scale(.94);
+}
+
+/* PENALTY */
+
+.penalty-field{
+    height:330px;
+    border-radius:22px;
+    position:relative;
+    overflow:hidden;
+    background:
+        linear-gradient(rgba(0,100,50,.2),rgba(0,40,20,.4)),
+        repeating-linear-gradient(
+            90deg,
+            #155e38 0 50px,
+            #176b40 50px 100px
+        );
+}
+
+.goal{
+    position:absolute;
+    top:35px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:110px;
+}
+
+.ball{
+    position:absolute;
+    font-size:48px;
+    left:50%;
+    bottom:25px;
+    transform:translateX(-50%);
+    transition:.5s;
+}
+
+.penalty-controls{
+    text-align:center;
+    margin-top:18px;
+}
+
+/* QUIZ */
+
+.quiz-question{
+    font-size:21px;
+    line-height:1.5;
+    margin:25px 0;
+}
+
+.quiz-options{
+    display:grid;
+    gap:10px;
+}
+
+.quiz-options button{
+    text-align:left;
+    padding:15px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.1);
+    background:rgba(255,255,255,.05);
+    color:white;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.quiz-options button:hover{
+    background:rgba(245,197,66,.15);
+}
+
+/* CATCH GAME */
+
+.arena{
+    position:relative;
+    height:350px;
+    border-radius:22px;
+    overflow:hidden;
+    background:
+        radial-gradient(circle at 50% 20%,rgba(34,197,94,.2),transparent 30%),
+        #06140d;
+}
+
+.player{
+    position:absolute;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:55px;
+    transition:left .12s;
+}
+
+.item{
+    position:absolute;
+    top:-50px;
+    font-size:32px;
+}
+
+.controls{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    margin-top:15px;
+}
+
+.control{
+    width:65px;
+    height:55px;
+    border:0;
+    border-radius:16px;
+    background:rgba(255,255,255,.08);
+    color:white;
+    font-size:25px;
+}
+
+/* RUNNER */
+
+.runner{
+    height:350px;
+    border-radius:22px;
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(#071a2b,#07130d);
+}
+
+.runner-player{
+    position:absolute;
+    bottom:30px;
+    left:70px;
+    font-size:50px;
+}
+
+.obstacle{
+    position:absolute;
+    right:-50px;
+    bottom:30px;
+    font-size:45px;
+}
+
+/* RESULT */
+
+.result{
+    text-align:center;
+    padding:35px 10px;
+}
+
+.result-icon{
+    font-size:70px;
+    margin-bottom:15px;
+}
+
+.result h2{
+    font-size:28px;
+    margin-bottom:10px;
+}
+
+.final-score{
+    color:#f5c542;
+    font-size:45px;
+    font-weight:bold;
+    margin:15px;
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+    .header{
+        padding-top:35px;
+    }
+
+    .header h1{
+        font-size:27px;
+    }
+
+    .game-grid{
+        grid-template-columns:1fr;
+    }
+
+    .game-card{
+        min-height:160px;
+    }
+
+    .game-box{
+        padding:18px;
+        border-radius:22px;
+    }
+
+    .penalty-field,
+    .arena,
+    .runner{
+        height:300px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- PARTICLES -->
+
+<script>
+for(let i=0;i<35;i++){
+    const p=document.createElement("div");
+    p.className="particle";
+    p.style.left=Math.random()*100+"%";
+    p.style.animationDelay=Math.random()*8+"s";
+    p.style.animationDuration=(5+Math.random()*7)+"s";
+    document.body.appendChild(p);
+}
+</script>
+
+<header class="header">
+
+    <div class="logo">🎮</div>
+
+    <h1>MBKM GAME CENTER</h1>
+
+    <p>
+        Main sebentar. Kumpulkan skor. Nikmati perjalanan MBKM.
+    </p>
+
+</header>
+
+<main class="container">
+
+<div class="game-grid">
+
+    <div class="game-card" onclick="openGame('penalty')">
+        <div class="game-icon">⚽</div>
+        <h2>Penalty Master</h2>
+        <p>
+            Ambil tendangan penalti dan coba cetak gol sebanyak mungkin.
+        </p>
+        <span class="play">MAIN →</span>
+    </div>
+
+    <div class="game-card" onclick="openGame('quiz')">
+        <div class="game-icon">🧠</div>
+        <h2>MBKM Quiz</h2>
+        <p>
+            Uji pengetahuanmu tentang MBKM dan kegiatan kelompok.
+        </p>
+        <span class="play">MAIN →</span>
+    </div>
+
+    <div class="game-card" onclick="openGame('catch')">
+        <div class="game-icon">🌱</div>
+        <h2>Green Catch</h2>
+        <p>
+            Tangkap buku dan bibit sebanyak mungkin sebelum waktu habis.
+        </p>
+        <span class="play">MAIN →</span>
+    </div>
+
+    <div class="game-card" onclick="openGame('runner')">
+        <div class="game-icon">🏃</div>
+        <h2>Campus Runner</h2>
+        <p>
+            Berlari sejauh mungkin dan hindari semua rintangan.
+        </p>
+        <span class="play">MAIN →</span>
+    </div>
+
+</div>
+
+</main>
+
+
+<!-- GAME SCREEN -->
+
+<div class="game-screen" id="gameScreen">
+
+<div class="game-box">
+
+    <div class="game-top">
+
+        <h2 id="gameTitle">Game</h2>
+
+        <button class="close" onclick="closeGame()">✕</button>
+
+    </div>
+
+    <div id="gameContent"></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   GLOBAL
+========================= */
+
+const screen = document.getElementById("gameScreen");
+const title = document.getElementById("gameTitle");
+const content = document.getElementById("gameContent");
+
+let gameTimer;
+let gameInterval;
+
+
+/* =========================
+   OPEN GAME
+========================= */
+
+function openGame(type){
+
+    clearAll();
+
+    screen.classList.add("active");
+
+    if(type==="penalty") penaltyGame();
+    if(type==="quiz") quizGame();
+    if(type==="catch") catchGame();
+    if(type==="runner") runnerGame();
+}
+
+
+/* =========================
+   CLOSE
+========================= */
+
+function closeGame(){
+
+    clearAll();
+
+    screen.classList.remove("active");
+
+    content.innerHTML="";
+}
+
+
+/* =========================
+   CLEAR
+========================= */
+
+function clearAll(){
+
+    clearInterval(gameTimer);
+    clearInterval(gameInterval);
+
+}
+
+
+/* =========================
+   PENALTY
+========================= */
+
+function penaltyGame(){
+
+    title.textContent="⚽ Penalty Master";
+
+    let score=0;
+    let attempts=5;
+
+    content.innerHTML=`
+
+        <div class="score">
+            Gol: <span id="penaltyScore">0</span>
+            &nbsp; • &nbsp;
+            Percobaan: <span id="attempts">5</span>
+        </div>
+
+        <br>
+
+        <div class="penalty-field">
+
+            <div class="goal">🥅</div>
+
+            <div class="ball" id="ball">
+                ⚽
+            </div>
+
+        </div>
+
+        <div class="penalty-controls">
+
+            <button class="btn" onclick="shootBall()">
+                ⚡ TENDANG
+            </button>
+
+            <p id="penaltyMessage" style="margin-top:15px;color:#aaa;">
+                Siap untuk mencetak gol?
+            </p>
+
+        </div>
+    `;
+}
+
+
+/* SHOOT */
+
+function shootBall(){
+
+    const ball=document.getElementById("ball");
+
+    if(!ball || attemptsLeft()<=0) return;
+
+    let attempts=attemptsLeft();
+
+    attempts--;
+
+    document.getElementById("attempts").textContent=attempts;
+
+    const goal=Math.random()<.55;
+
+    if(goal){
+
+        penaltyScore++;
+
+        document.getElementById("penaltyScore").textContent=penaltyScore;
+
+        ball.style.bottom="230px";
+
+        ball.style.left=(35+Math.random()*30)+"%";
+
+        document.getElementById("penaltyMessage").textContent=
+            "🔥 GOOOOOL!";
+
+    }else{
+
+        ball.style.bottom="190px";
+
+        ball.style.left=(15+Math.random()*70)+"%";
+
+        document.getElementById("penaltyMessage").textContent=
+            "😅 Ditepis kiper!";
+
+    }
+
+    setTimeout(()=>{
+
+        ball.style.bottom="25px";
+        ball.style.left="50%";
+
+        if(attempts<=0){
+
+            setTimeout(()=>{
+
+                showResult(
+                    "⚽",
+                    "Penalty Selesai!",
+                    penaltyScore
+                );
+
+            },500);
+
+        }
+
+    },600);
+}
+
+
+let penaltyScore=0;
+
+function attemptsLeft(){
+
+    const el=document.getElementById("attempts");
+
+    return el ? Number(el.textContent):0;
+}
+
+
+/* =========================
+   QUIZ
+========================= */
+
+const questions=[
+
+{
+q:"Apa kepanjangan dari MBKM?",
+a:[
+"Merdeka Belajar Kampus Merdeka",
+"Mahasiswa Belajar Kegiatan Mandiri",
+"Manajemen Belajar Kampus Modern",
+"Media Belajar Kegiatan Mahasiswa"
+],
+correct:0
+},
+
+{
+q:"Apa salah satu tujuan kegiatan MBKM?",
+a:[
+"Mengurangi pengalaman mahasiswa",
+"Memberikan pengalaman belajar di luar kelas",
+"Menghapus kegiatan kampus",
+"Mengurangi kegiatan sosial"
+],
+correct:1
+},
+
+{
+q:"Apa fungsi dokumentasi dalam sebuah kegiatan?",
+a:[
+"Menyimpan dan mengabadikan kegiatan",
+"Menghapus kegiatan",
+"Mengurangi peserta",
+"Menggantikan panitia"
+],
+correct:0
+},
+
+{
+q:"Apa yang mencerminkan kerja sama?",
+a:[
+"🤝",
+"🚫",
+"💤",
+"❌"
+],
+correct:0
+}
+
+];
+
+let questionIndex=0;
+let quizScore=0;
+
+function quizGame(){
+
+    title.textContent="🧠 MBKM Quiz";
+
+    questionIndex=0;
+    quizScore=0;
+
+    showQuestion();
+}
+
+
+function showQuestion(){
+
+    if(questionIndex>=questions.length){
+
+        showResult(
+            "🧠",
+            "Quiz Selesai!",
+            quizScore+"/"+questions.length
+        );
+
+        return;
+    }
+
+    const q=questions[questionIndex];
+
+    content.innerHTML=`
+
+        <div class="score">
+            Pertanyaan ${questionIndex+1}/${questions.length}
+            • Skor ${quizScore}
+        </div>
+
+        <div class="quiz-question">
+            ${q.q}
+        </div>
+
+        <div class="quiz-options">
+
+            ${q.a.map((answer,index)=>`
+
+                <button onclick="answerQuiz(${index})">
+                    ${answer}
+                </button>
+
+            `).join("")}
+
+        </div>
+
+    `;
+}
+
+
+function answerQuiz(index){
+
+    if(index===questions[questionIndex].correct){
+
+        quizScore++;
+
+    }
+
+    questionIndex++;
+
+    setTimeout(showQuestion,200);
+}
+
+
+/* =========================
+   GREEN CATCH
+========================= */
+
+function catchGame(){
+
+    title.textContent="🌱 Green Catch";
+
+    let score=0;
+    let time=20;
+    let player=50;
+
+    content.innerHTML=`
+
+        <div class="score">
+            🌱 Skor:
+            <span id="catchScore">0</span>
+
+            &nbsp; • &nbsp;
+
+            ⏱️
+            <span id="catchTime">20</span>s
+        </div>
+
+        <br>
+
+        <div class="arena" id="catchArena">
+
+            <div class="player" id="catchPlayer">
+                🧑‍🎓
+            </div>
+
+        </div>
+
+        <div class="controls">
+
+            <button class="control"
+                onclick="moveCatch(-10)">
+                ⬅️
+            </button>
+
+            <button class="control"
+                onclick="moveCatch(10)">
+                ➡️
+            </button>
+
+        </div>
+
+    `;
+
+    window.catchScore=0;
+    window.catchPlayerPosition=50;
+
+    gameInterval=setInterval(()=>{
+
+        createCatchItem();
+
+    },700);
+
+    gameTimer=setInterval(()=>{
+
+        time--;
+
+        const t=document.getElementById("catchTime");
+
+        if(t)t.textContent=time;
+
+        if(time<=0){
+
+            clearAll();
+
+            showResult(
+                "🌱",
+                "Waktu Habis!",
+                window.catchScore
+            );
+
+        }
+
+    },1000);
+}
+
+
+function moveCatch(direction){
+
+    window.catchPlayerPosition+=direction;
+
+    window.catchPlayerPosition=Math.max(
+        8,
+        Math.min(92,window.catchPlayerPosition)
+    );
+
+    const player=document.getElementById("catchPlayer");
+
+    if(player){
+
+        player.style.left=
+            window.catchPlayerPosition+"%";
+
+    }
+}
+
+
+function createCatchItem(){
+
+    const arena=document.getElementById("catchArena");
+
+    if(!arena)return;
+
+    const item=document.createElement("div");
+
+    item.className="item";
+
+    item.textContent=
+        Math.random()<.5 ? "🌱":"📚";
+
+    item.style.left=
+        (5+Math.random()*90)+"%";
+
+    arena.appendChild(item);
+
+    let top=-50;
+
+    const fall=setInterval(()=>{
+
+        top+=5;
+
+        item.style.top=top+"px";
+
+        const itemX=parseFloat(item.style.left);
+
+        if(
+            top>260 &&
+            Math.abs(itemX-window.catchPlayerPosition)<12
+        ){
+
+            window.catchScore++;
+
+            const score=
+                document.getElementById("catchScore");
+
+            if(score)
+                score.textContent=window.catchScore;
+
+            item.remove();
+
+            clearInterval(fall);
+
+        }
+
+        if(top>360){
+
+            item.remove();
+
+            clearInterval(fall);
+
+        }
+
+    },40);
+}
+
+
+/* =========================
+   CAMPUS RUNNER
+========================= */
+
+function runnerGame(){
+
+    title.textContent="🏃 Campus Runner";
+
+    let score=0;
+    let playerY=0;
+    let jumping=false;
+
+    content.innerHTML=`
+
+        <div class="score">
+            🏆 Jarak:
+            <span id="runnerScore">0</span>
+        </div>
+
+        <br>
+
+        <div class="runner" id="runnerArena">
+
+            <div class="runner-player"
+                id="runnerPlayer">
+                🏃
+            </div>
+
+        </div>
+
+        <div class="controls">
+
+            <button class="control"
+                onclick="jumpRunner()">
+                ⬆️
+            </button>
+
+        </div>
+
+    `;
+
+    gameInterval=setInterval(()=>{
+
+        score++;
+
+        const s=
+            document.getElementById("runnerScore");
+
+        if(s)s.textContent=score;
+
+        createObstacle();
+
+    },1000);
+
+}
+
+
+function jumpRunner(){
+
+    if(jumping)return;
+
+    jumping=true;
+
+    const player=
+        document.getElementById("runnerPlayer");
+
+    if(!player)return;
+
+    player.style.bottom="150px";
+
+    setTimeout(()=>{
+
+        player.style.bottom="30px";
+
+        jumping=false;
+
+    },550);
+
+}
+
+
+function createObstacle(){
+
+    const arena=
+        document.getElementById("runnerArena");
+
+    if(!arena)return;
+
+    const obstacle=
+        document.createElement("div");
+
+    obstacle.className="obstacle";
+
+    obstacle.textContent=
+        Math.random()<.5?"🪨":"🌳";
+
+    arena.appendChild(obstacle);
+
+    let right=-50;
+
+    const move=setInterval(()=>{
+
+        right+=6;
+
+        obstacle.style.right=right+"px";
+
+        if(right>700){
+
+            obstacle.remove();
+
+            clearInterval(move);
+
+        }
+
+    },40);
+
+}
+
+
+/* =========================
+   RESULT
+========================= */
+
+function showResult(icon,message,score){
+
+    clearAll();
+
+    content.innerHTML=`
+
+        <div class="result">
+
+            <div class="result-icon">
+                ${icon}
+            </div>
+
+            <h2>
+                ${message}
+            </h2>
+
+            <p>
+                Skor kamu
+            </p>
+
+            <div class="final-score">
+                ${score}
+            </div>
+
+            <button
+                class="btn"
+                onclick="location.reload()">
+
+                🔄 Main Lagi
+
+            </button>
+
+        </div>
+
+    `;
+}
+
+</script>
+
+</body>
+</html>
