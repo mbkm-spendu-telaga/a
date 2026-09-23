@@ -1,3 +1,46 @@
+/* =========================
+   FIREBASE BUKU TAMU
+========================= */
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    onSnapshot,
+    query,
+    orderBy,
+    serverTimestamp,
+    updateDoc,
+    doc,
+    increment
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+const firebaseConfig = {
+
+    apiKey: "AIzaSyAzWcN5v8bdDMW2ZusUiEwKmKu8V0YKEU",
+
+    authDomain: "mbkmv2.firebaseapp.com",
+
+    projectId: "mbkmv2",
+
+    storageBucket: "mbkmv2.firebasestorage.app",
+
+    messagingSenderId: "744956152637",
+
+    appId: "1:744956152637:web:33701cd90d4a1f80819354"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+
+
 /* =========================================
    DATA ANGGOTA KKN
 ========================================= */
@@ -135,6 +178,7 @@ const modalStudy = document.getElementById("modalStudy");
 const modalBio = document.getElementById("modalBio");
 const navMenu = document.getElementById("navMenu");
 
+console.log("MBKM WEBSITE JS AKTIF");
 
 /* =========================================
    MEMBUAT KARTU ANGGOTA
@@ -216,6 +260,12 @@ function closeProfile() {
 function toggleMenu() {
 
     navMenu.classList.toggle("active");
+
+    const menuButton = document.querySelector(".menu-btn");
+
+    if (menuButton) {
+        menuButton.classList.toggle("active");
+    }
 }
 
 
@@ -330,30 +380,39 @@ function toggleMusic() {
 window.toggleMusic = toggleMusic;
 
 /* =========================
-   ANIMASI SAAT SCROLL
+   ANIMASI SCROLL
 ========================= */
 
 const revealElements = document.querySelectorAll(
     "section, .card, .member-card, .program-card, .gallery-item"
 );
 
-const revealObserver = new IntersectionObserver(
-    function(entries) {
-        entries.forEach(function(entry) {
-            if (entry.isIntersecting) {
-                entry.target.classList.add("active");
-            }
-        });
-    },
-    {
-        threshold: 0.15
-    }
-);
-
 revealElements.forEach(function(element) {
     element.classList.add("reveal");
-    revealObserver.observe(element);
 });
+
+function revealOnScroll() {
+
+    revealElements.forEach(function(element) {
+
+        const rect = element.getBoundingClientRect();
+
+        const triggerPoint = window.innerHeight * 0.85;
+
+        if (rect.top < triggerPoint && rect.bottom > 0) {
+            element.classList.add("active");
+        } else {
+            element.classList.remove("active");
+        }
+
+    });
+
+}
+
+window.addEventListener("scroll", revealOnScroll);
+window.addEventListener("resize", revealOnScroll);
+
+revealOnScroll();
 
 
 /* =========================
@@ -466,3 +525,282 @@ document.addEventListener("keydown", function(e) {
     }
 
 });
+
+/* =========================
+   BUKU TAMU FIREBASE
+========================= */
+
+const guestbookRef =
+    collection(db, "guestbook");
+
+
+/* KIRIM PESAN */
+
+async function addGuestbook() {
+
+    const nama =
+        document.getElementById("guestName");
+
+    const pesan =
+        document.getElementById("guestMessage");
+
+    if (!nama.value || !pesan.value) {
+
+        alert("Isi nama dan pesan terlebih dahulu");
+
+        return;
+    }
+
+    try {
+
+        await addDoc(
+            guestbookRef,
+            {
+                nama: nama.value,
+                pesan: pesan.value,
+                timestamp: serverTimestamp()
+            }
+        );
+
+        nama.value = "";
+        pesan.value = "";
+
+    } catch (error) {
+
+        console.log(error);
+
+        alert("Gagal mengirim pesan");
+
+    }
+
+}
+
+
+/* TAMPILKAN PESAN */
+
+const guestContainer =
+    document.getElementById("guestbookContainer");
+
+const q = query(
+    guestbookRef,
+    orderBy("timestamp", "desc")
+);
+
+onSnapshot(q, function(snapshot) {
+
+    guestContainer.innerHTML = "";
+
+    if (snapshot.empty) {
+
+        guestContainer.innerHTML =
+            `
+            <div class="guestbook-empty">
+                Belum ada pesan.
+            </div>
+            `;
+
+        return;
+    }
+
+    snapshot.forEach(function(docItem) {
+
+        const data = docItem.data();
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "guestbook-message";
+
+        let tanggal = "";
+
+        if (data.timestamp) {
+
+            tanggal =
+                data.timestamp
+                    .toDate()
+                    .toLocaleString(
+                        "id-ID"
+                    );
+        }
+
+        const initial =
+    data.nama
+        ? data.nama.trim().charAt(0).toUpperCase()
+        : "?";
+
+div.innerHTML =
+    `
+    <div class="guest-avatar">
+        ${initial}
+    </div>
+
+    <div class="guest-content">
+
+        <strong>
+            ${data.nama}
+        </strong>
+
+        <p>
+            ${data.pesan}
+        </p>
+
+        <div class="guest-bottom">
+
+            <span class="guestbook-date">
+                ${tanggal}
+            </span>
+
+            <button
+    class="guest-like"
+    data-id="${docItem.id}"
+    onclick="likeGuestbook('${docItem.id}')"
+>
+    ❤️ <span>${data.likes || 0}</span>
+</button>
+
+        </div>
+
+    </div>
+    `;
+
+        guestContainer.appendChild(div);
+
+    });
+
+});
+
+
+window.addGuestbook =
+    addGuestbook;
+
+/* =========================
+   LIKE BUKU TAMU
+   1 PERANGKAT = 1 LIKE
+========================= */
+
+async function likeGuestbook(id) {
+
+    const likedKey =
+        "liked_guestbook_" + id;
+
+
+    /* CEK SUDAH LIKE */
+
+    if (localStorage.getItem(likedKey)) {
+
+        showPremiumAlert(
+            "Sudah Disukai ❤️",
+            "Kamu sudah menyukai pesan ini. Tidak bisa like dua kali ya 😊",
+            "✓"
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const messageRef =
+            doc(db, "guestbook", id);
+
+
+        /* TAMBAH LIKE DI FIREBASE */
+
+        await updateDoc(
+            messageRef,
+            {
+                likes: increment(1)
+            }
+        );
+
+
+        /* SIMPAN STATUS DI PERANGKAT */
+
+        localStorage.setItem(
+            likedKey,
+            "true"
+        );
+
+
+        /* POPUP BERHASIL */
+
+        showPremiumAlert(
+            "Berhasil! ❤️",
+            "Terima kasih sudah menyukai pesan ini.",
+            "✓"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Gagal memberikan like:",
+            error
+        );
+
+
+        showPremiumAlert(
+            "Gagal!",
+            "Like tidak dapat diproses. Silakan coba lagi.",
+            "×"
+        );
+
+    }
+}
+
+
+window.likeGuestbook =
+    likeGuestbook;
+
+
+window.likeGuestbook = likeGuestbook;
+
+/* =================================
+   PREMIUM ALERT SYSTEM
+================================= */
+
+function showPremiumAlert(
+    title,
+    message,
+    icon = "✓"
+) {
+
+    const alertBox =
+        document.getElementById("premiumAlert");
+
+    const alertIcon =
+        document.getElementById("premiumAlertIcon");
+
+    const alertTitle =
+        document.getElementById("premiumAlertTitle");
+
+    const alertMessage =
+        document.getElementById("premiumAlertMessage");
+
+
+    alertIcon.textContent = icon;
+
+    alertTitle.textContent = title;
+
+    alertMessage.textContent = message;
+
+
+    alertBox.classList.add("show");
+}
+
+
+function closePremiumAlert() {
+
+    const alertBox =
+        document.getElementById("premiumAlert");
+
+    alertBox.classList.remove("show");
+}
+
+
+window.showPremiumAlert =
+    showPremiumAlert;
+
+window.closePremiumAlert =
+    closePremiumAlert;
