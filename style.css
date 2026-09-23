@@ -2735,3 +2735,404 @@ footer small {
     }
 
 }
+
+/* =================================
+   PREMIUM GUESTBOOK
+================================= */
+
+.guestbook {
+    position: relative;
+    overflow: hidden;
+}
+
+.guestbook-container {
+    max-width: 1050px;
+    margin: 50px auto 0;
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 30px;
+}
+
+.guestbook-form,
+.guestbook-list {
+    position: relative;
+    padding: 30px;
+    border-radius: 28px;
+    background: rgba(255,255,255,.78);
+    border: 1px solid rgba(255,255,255,.8);
+    box-shadow: 0 20px 50px rgba(18,61,43,.10);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.guestbook-form::before,
+.guestbook-list::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 30px;
+    right: 30px;
+    height: 4px;
+    border-radius: 0 0 10px 10px;
+    background: linear-gradient(
+        90deg,
+        #123d2b,
+        #f2c94c,
+        #2f8f5b
+    );
+}
+
+.guestbook-form h3,
+.guestbook-list h3 {
+    margin-top: 8px;
+    margin-bottom: 22px;
+    color: #123d2b;
+    font-size: 20px;
+}
+
+.guestbook-form input,
+.guestbook-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px 17px;
+    margin-bottom: 15px;
+
+    border: 1px solid #e2e7e3;
+    border-radius: 16px;
+
+    outline: none;
+    background: rgba(255,255,255,.9);
+    color: #123d2b;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    transition:
+        border .3s ease,
+        box-shadow .3s ease,
+        transform .3s ease;
+}
+
+.guestbook-form input:focus,
+.guestbook-form textarea:focus {
+    border-color: #2f8f5b;
+
+    box-shadow:
+        0 0 0 4px rgba(47,143,91,.10);
+
+    transform: translateY(-2px);
+}
+
+.guestbook-form textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.guestbook-btn {
+    width: 100%;
+    padding: 15px;
+
+    border: none;
+    border-radius: 16px;
+
+    color: white;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            135deg,
+            #123d2b,
+            #2f8f5b
+        );
+
+    box-shadow:
+        0 10px 25px rgba(18,61,43,.18);
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+.guestbook-btn:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 15px 30px rgba(18,61,43,.25);
+}
+
+.guestbook-btn:active {
+    transform: scale(.97);
+}
+
+
+/* =================================
+   DAFTAR PESAN
+================================= */
+
+#guestbookContainer {
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+#guestbookContainer::-webkit-scrollbar {
+    width: 5px;
+}
+
+#guestbookContainer::-webkit-scrollbar-thumb {
+    background: #2f8f5b;
+    border-radius: 10px;
+}
+
+
+/* =================================
+   PESAN
+================================= */
+
+.guestbook-message {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 13px;
+
+    padding: 17px;
+    margin-bottom: 14px;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.95),
+            rgba(242,248,244,.9)
+        );
+
+    border: 1px solid rgba(18,61,43,.07);
+
+    box-shadow:
+        0 8px 20px rgba(18,61,43,.06);
+
+    animation:
+        guestMessageIn .5s ease both;
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+.guestbook-message:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 12px 25px rgba(18,61,43,.11);
+}
+
+
+/* =================================
+   AVATAR
+================================= */
+
+.guest-avatar {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #123d2b,
+            #f2c94c
+        );
+
+    color: white;
+
+    font-size: 19px;
+    font-weight: 800;
+
+    box-shadow:
+        0 6px 15px rgba(18,61,43,.18);
+}
+
+.guest-content {
+    min-width: 0;
+}
+
+.guestbook-message strong {
+    display: block;
+
+    color: #123d2b;
+
+    font-size: 15px;
+
+    margin-bottom: 5px;
+}
+
+.guestbook-message p {
+    margin: 0;
+
+    color: #555;
+
+    line-height: 1.6;
+
+    font-size: 14px;
+
+    word-break: break-word;
+}
+
+
+/* =================================
+   TANGGAL + LIKE
+================================= */
+
+.guest-bottom {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    margin-top: 8px;
+}
+
+.guestbook-date {
+    display: block;
+
+    color: #999;
+
+    font-size: 11px;
+}
+
+.guest-like {
+    border: none;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    font-size: 13px;
+
+    padding: 5px 8px;
+
+    border-radius: 10px;
+
+    transition: .25s;
+}
+
+.guest-like:hover {
+    background:
+        rgba(242,201,76,.15);
+
+    transform: scale(1.08);
+}
+
+.guest-like:active {
+    transform: scale(1.25);
+}
+
+.guest-like span {
+    font-weight: 600;
+}
+
+
+/* =================================
+   PESAN KOSONG
+================================= */
+
+.guestbook-empty {
+    padding: 45px 15px;
+
+    text-align: center;
+
+    color: #999;
+
+    font-size: 14px;
+}
+
+
+/* =================================
+   ANIMASI
+================================= */
+
+@keyframes guestMessageIn {
+
+    from {
+        opacity: 0;
+        transform:
+            translateY(20px)
+            scale(.97);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+/* =================================
+   HILANGKAN AVATAR LAMA
+================================= */
+
+.guestbook-message::before {
+    display: none;
+}
+
+
+/* =================================
+   MOBILE
+================================= */
+
+@media(max-width:650px) {
+
+    .guestbook-container {
+        grid-template-columns: 1fr;
+
+        margin-top: 30px;
+
+        gap: 20px;
+    }
+
+    .guestbook-form,
+    .guestbook-list {
+        padding: 22px;
+
+        border-radius: 22px;
+    }
+
+    .guestbook-form::before,
+    .guestbook-list::before {
+        left: 22px;
+        right: 22px;
+    }
+
+    #guestbookContainer {
+        max-height: 450px;
+    }
+
+    .guestbook-message {
+        grid-template-columns:
+            42px 1fr;
+
+        padding: 14px;
+    }
+
+    .guest-avatar {
+        width: 42px;
+        height: 42px;
+
+        font-size: 17px;
+    }
+
+   }
