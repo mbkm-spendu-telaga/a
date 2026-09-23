@@ -23,12 +23,13 @@
     </button>
 
     <nav id="navMenu">
-        <a href="#home">Home</a>
-        <a href="#tentang">Tentang</a>
-        <a href="#anggota">Anggota</a>
-        <a href="#proker">Program Kerja</a>
-        <a href="#galeri">Galeri</a>
-      <a href="games/index.html">🎮 Game Center</a>
+    <a href="#home">Home</a>
+    <a href="#tentang">Tentang</a>
+    <a href="#anggota">Anggota</a>
+    <a href="#proker">Program Kerja</a>
+    <a href="#galeri">Galeri</a>
+    <a href="#bukutamu">Buku Tamu</a>
+    <a href="games/index.html">🎮</a>
     </nav>
 
 </header>
@@ -296,7 +297,80 @@
 
 </section>
 
-  
+  <!-- =========================
+     BUKU TAMU
+========================= -->
+
+<section class="section guestbook" id="bukutamu">
+
+    <div class="section-title">
+
+        <p>GUESTBOOK</p>
+
+        <h2>
+            Tinggalkan<br>
+            Pesan Kalian.
+        </h2>
+
+        <span>
+            Sampaikan kesan, pesan, atau ucapan
+            untuk kelompok MBKM kami.
+        </span>
+
+    </div>
+
+
+    <div class="guestbook-container">
+
+        <!-- FORM -->
+        <div class="guestbook-form">
+
+            <h3>📖 Tulis di Buku Tamu</h3>
+
+            <input
+                type="text"
+                id="guestName"
+                placeholder="Nama kamu"
+                maxlength="50"
+            >
+
+            <textarea
+                id="guestMessage"
+                placeholder="Tulis kesan atau pesan kamu..."
+                maxlength="300"
+            ></textarea>
+
+            <button
+                type="button"
+                onclick="addGuestbook()"
+                class="guestbook-btn"
+            >
+                ✨ Kirim Pesan
+            </button>
+
+        </div>
+
+
+        <!-- DAFTAR PESAN -->
+        <div class="guestbook-list">
+
+            <h3>
+                💬 Pesan Pengunjung
+            </h3>
+
+            <div id="guestbookContainer">
+
+                <div class="guestbook-empty">
+                    Belum ada pesan.
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
 
 <!-- FOOTER -->
 <footer>
@@ -368,7 +442,7 @@
     🎵
 </button>
 
-<script src="script.js"></script>
+<script type="module" src="script.js"></script>
 
   <div id="programModal" class="program-modal">
 
@@ -391,6 +465,37 @@
     </div>
 
   </div>
+
+  <!-- =========================
+     PREMIUM ALERT
+========================= -->
+
+<div id="premiumAlert" class="premium-alert-overlay">
+
+    <div class="premium-alert-box">
+
+        <div class="premium-alert-icon" id="premiumAlertIcon">
+            ✓
+        </div>
+
+        <h3 id="premiumAlertTitle">
+            Berhasil!
+        </h3>
+
+        <p id="premiumAlertMessage">
+            Pesan berhasil diproses.
+        </p>
+
+        <button
+            class="premium-alert-button"
+            onclick="closePremiumAlert()"
+        >
+            Mengerti
+        </button>
+
+    </div>
+
+</div>
 
   
 </body>
@@ -443,4 +548,4 @@
     </div>
 
 </div>
-</html>
+    </html>
